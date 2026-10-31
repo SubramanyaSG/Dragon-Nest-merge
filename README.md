@@ -58,8 +58,8 @@ const TEST=false; // true ONLY to test fake ads in a normal browser. MUST be fal
 No installation needed.
 
 ```bash
-git clone https://github.com/<your-username>/<your-repo>.git
-cd <your-repo>
+git clone https://github.com/SubramanyaSG/Dragon-Nest-merge.git
+cd /SubramanyaSG/Dragon-Nest-merge
 # open index.html in your browser, or serve it:
 python3 -m http.server 8000
 # then visit http://localhost:8000
@@ -70,7 +70,7 @@ python3 -m http.server 8000
 1. Set `TEST=true` in a demo copy of `index.html` so reviewers can see the ad flow.
 2. Push the repo to GitHub.
 3. Go to **Settings → Pages**, choose your branch and the root folder, then save.
-4. Your game will be live at `https://<your-username>.github.io/<your-repo>/`.
+4. Your game will be live at `https://subramanyasg.github.io/Dragon-Nest-merge/`.
 
 ## 📦 Submit to YouTube Playables
 
@@ -120,4 +120,4 @@ Add your preferred license here (for example, MIT). Pet emojis are standard Unic
 
 ## 🙌 Credits
 
-Made by **<your name>**. Feedback and ideas are welcome. Open an issue or a pull request.
+Made by SubramanyaSG. Feedback and ideas are welcome. Open an issue or a pull request.
