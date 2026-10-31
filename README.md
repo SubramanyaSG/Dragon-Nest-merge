@@ -8,7 +8,7 @@ A casual HTML5 merge-and-evolve game built for **YouTube Playables**. Merge matc
 
 ## ✨ Features
 
-- **7 kingdoms**, each with 12 evolution levels: Birds 🐦, Amphibians 🐸, Fishes 🐠, Animals 🦁, Humans 👑, Bugs 🐞 and Plants 🌳
+- **10 kingdoms**, each with 12 evolution levels: Birds 🐦, Amphibians 🐸, Fishes 🐠, Animals 🦁, Humans 👑, Bugs 🐞, Plants 🌳, Legends 🦄, Robots 🤖 and Space 🚀
 - **5×6 merge board**: tap a pet, then tap an identical pet to merge them into the next level
 - **Kingdom progression**: reach Level 12 to complete a kingdom and unlock the next one, with animated transitions
 - **Energy system**: every spawn costs 1⚡. Energy recharges 1⚡ every 5 seconds, and the maximum grows by 1 for each level you reach in the current kingdom
@@ -58,8 +58,8 @@ const TEST=false; // true ONLY to test fake ads in a normal browser. MUST be fal
 No installation needed.
 
 ```bash
-git clone https://github.com/SubramanyaSG/Dragon-Nest-merge.git
-cd /SubramanyaSG/Dragon-Nest-merge
+git clone https://github.com/<your-username>/<your-repo>.git
+cd <your-repo>
 # open index.html in your browser, or serve it:
 python3 -m http.server 8000
 # then visit http://localhost:8000
@@ -70,7 +70,7 @@ python3 -m http.server 8000
 1. Set `TEST=true` in a demo copy of `index.html` so reviewers can see the ad flow.
 2. Push the repo to GitHub.
 3. Go to **Settings → Pages**, choose your branch and the root folder, then save.
-4. Your game will be live at `https://subramanyasg.github.io/Dragon-Nest-merge/`.
+4. Your game will be live at `https://<your-username>.github.io/<your-repo>/`.
 
 ## 📦 Submit to YouTube Playables
 
@@ -120,4 +120,4 @@ Add your preferred license here (for example, MIT). Pet emojis are standard Unic
 
 ## 🙌 Credits
 
-Made by **SubramanyaSG**. Feedback and ideas are welcome. Open an issue or a pull request.
+Made by **<your name>**. Feedback and ideas are welcome. Open an issue or a pull request.

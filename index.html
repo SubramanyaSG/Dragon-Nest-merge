@@ -77,7 +77,10 @@ const K=[
 {n:"Animals",i:"🦁",bg:"#9a5b1c,#3a210a",t:[["Mouse","🐭"],["Hamster","🐹"],["Rabbit","🐰"],["Cat","🐱"],["Dog","🐶"],["Fox","🦊"],["Wolf","🐺"],["Horse","🐴"],["Cow","🐮"],["Bear","🐻"],["Lion","🦁"],["Elephant","🐘"]]},
 {n:"Humans",i:"👑",bg:"#6a2c91,#220f35",t:[["Baby","👶"],["Child","🧒"],["Student","🧑‍🎓"],["Farmer","🧑‍🌾"],["Cook","🧑‍🍳"],["Doctor","🧑‍⚕️"],["Artist","🧑‍🎨"],["Engineer","🧑‍🔧"],["Astronaut","🧑‍🚀"],["Hero","🦸"],["Wizard","🧙"],["King","👑"]]},
 {n:"Bugs",i:"🐞",bg:"#a3283c,#33080f",t:[["Egg","🥚"],["Caterpillar","🐛"],["Ant","🐜"],["Fly","🪰"],["Mosquito","🦟"],["Cricket","🦗"],["Ladybug","🐞"],["Bee","🐝"],["Beetle","🪲"],["Scorpion","🦂"],["Spider","🕷️"],["Butterfly","🦋"]]},
-{n:"Plants",i:"🌳",bg:"#6a9b1f,#243808",t:[["Seed","🌰"],["Sprout","🌱"],["Leaf","🌿"],["Clover","🍀"],["Tulip","🌷"],["Sunflower","🌻"],["Rose","🌹"],["Cactus","🌵"],["Palm","🌴"],["Oak","🌳"],["Redwood","🌲"],["World Tree","🎄"]]}];
+{n:"Plants",i:"🌳",bg:"#6a9b1f,#243808",t:[["Seed","🌰"],["Sprout","🌱"],["Leaf","🌿"],["Clover","🍀"],["Tulip","🌷"],["Sunflower","🌻"],["Rose","🌹"],["Cactus","🌵"],["Palm","🌴"],["Oak","🌳"],["Redwood","🌲"],["World Tree","🎄"]]},
+{n:"Legends",i:"🦄",bg:"#b0388f,#2f0b33",t:[["Stardust","✨"],["Fairy","🧚"],["Elf","🧝"],["Genie","🧞"],["Mermaid","🧜"],["Unicorn","🦄"],["Golem","🗿"],["Spirit","👻"],["Troll","🧌"],["Oracle","🔮"],["Phoenix","🔥"],["Mythic Dragon","🐉"]]},
+{n:"Robots",i:"🤖",bg:"#2a6f97,#0b1b2b",t:[["Bolt","🔩"],["Gear","⚙️"],["Battery","🔋"],["Spark Core","💡"],["Antenna","📡"],["Computer","🖥️"],["Robo Arm","🦾"],["Robo Leg","🦿"],["Drone","🚁"],["Auto Car","🚗"],["AI Core","🧠"],["Mega Robot","🤖"]]},
+{n:"Space",i:"🚀",bg:"#14206b,#030312",t:[["Space Rock","🪨"],["Comet","☄️"],["Moon","🌙"],["Satellite","🛰️"],["Rocket","🚀"],["Alien","👽"],["UFO","🛸"],["Earth","🌍"],["Saturn","🪐"],["Sun","☀️"],["Star","⭐"],["Galaxy","🌌"]]}];
 const N=30,REG=5000,NC=[250,1600,9500];
 let S={nm:"",mu:1,sf:1,tut:0,k:0,un:1,wel:0,b:K.map(()=>({g:Array(N).fill(0),mx:1,n:0,done:0})),e:6,t:Date.now(),c:0,sc:0,streak:0,d:0,last:Date.now()},sel=-1,aud=true;
 const B=()=>S.b[S.k],cap=()=>5+B().mx;
@@ -210,7 +213,7 @@ function buildK(){$('kl').innerHTML='';K.forEach((k,i)=>{const d=document.create
  d.className='kc'+(i===S.k?' cur':'')+(lk?' lock':'');
  d.innerHTML='<div class="e">'+(lk?'🔒':k.i)+'</div><div><b>'+k.n+'</b><br>'+(lk?'Complete '+K[i-1].n+' first':S.b[i].done?'✅ Completed':'Best: Level '+S.b[i].mx+'/12')+'</div>';
  d.onclick=()=>lk?toast('Complete '+K[i-1].n+' first'):goK(i);$('kl').appendChild(d)})}
-const RIV=[["Egg Rookie",0,40,2,0,1],["Tiny Tim",0,120,3,0,1],["Sir Flappington",0,500,6,0,1],["Pebble the Newt",1,1500,4,1,2],["Ribbit Royal",1,4000,8,1,2],["Captain Finley",2,9000,7,2,3],["Luna Wolfheart",3,18000,8,3,4],["Professor Bumble",5,35000,6,5,6],["Queen Mira",4,60000,9,4,5],["Grandmaster Oak",6,100000,5,6,7],["Phoenix Rider Kai",4,160000,12,5,6],["Dragon Lord Zephyr",6,250000,12,7,7]].map(a=>({name:a[0],k:a[1],sc:a[2],mx:a[3],done:a[4],un:a[5],f:1,seen:0}));
+const RIV=[["Egg Rookie",0,40,2,0,1],["Tiny Tim",0,120,3,0,1],["Sir Flappington",0,500,6,0,1],["Pebble the Newt",1,1500,4,1,2],["Ribbit Royal",1,4000,8,1,2],["Captain Finley",2,9000,7,2,3],["Luna Wolfheart",3,18000,8,3,4],["Professor Bumble",5,35000,6,5,6],["Queen Mira",4,60000,9,4,5],["Grandmaster Oak",6,100000,5,6,7],["Phoenix Rider Kai",4,160000,12,5,6],["Dragon Lord Zephyr",6,250000,12,7,7],["Cyber Queen Ada",8,380000,9,8,9],["Cosmic Overlord Nova",9,520000,12,9,10]].map(a=>({name:a[0],k:a[1],sc:a[2],mx:a[3],done:a[4],un:a[5],f:1,seen:0}));
 const ago=t=>{const m=Math.max(1,Math.round((Date.now()-t)/60000));return m<60?m+' min ago':Math.round(m/60)+' h ago'};
 function detail(r,kk,on){const t=kk.t[Math.min(Math.max(r.mx||1,1),12)-1];
  modal(kk.i+' '+String(r.name).slice(0,20),'Kingdom: '+kk.n+'\nScore: 🏆 '+fmt(+r.sc||0)+'\nBest pet: '+t[1]+' '+t[0]+' (Lv '+(r.mx||1)+'/12)\nKingdoms completed: '+(r.done||0)+'/'+K.length+'\nKingdoms unlocked: '+(r.un||1)+'/'+K.length+'\nStatus: '+(r.f?'🤖 Fictional rival: beat their score!':on?'🟢 Online now':'⚫ Last seen '+ago(r.seen)),[['Close',null,'g']])}
