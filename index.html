@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Dragon Nest Merge</title>
+<script src="https://www.youtube.com/game_api/v1"></script>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none}
+html,body{margin:0;height:100%;background:#0e2a47;color:#fff;font-family:system-ui,sans-serif;overflow:hidden}
+#app{position:relative;max-width:440px;margin:0 auto;height:100%;background:linear-gradient(#1d5a8a,#0e2a47);transition:background .6s}
+.scr{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;padding:10px;overflow-y:auto;opacity:0;pointer-events:none;transform:translateX(40px) scale(.97);transition:opacity .35s,transform .35s}
+.scr.on{opacity:1;pointer-events:auto;transform:none}
+h1{font-size:30px;text-align:center;margin:40px 0 4px}h2{margin:14px 0}
+#msub{opacity:.85;margin-bottom:24px}
+.btn{width:100%;border:0;border-radius:14px;padding:14px 8px;font-weight:700;font-size:16px;color:#fff;background:#7b3fe4;cursor:pointer;margin-bottom:10px;transition:transform .15s}
+.btn:active{transform:scale(.95)}.btn.ad{background:linear-gradient(#ff8a00,#e52e71)}.btn.g{background:#1fa971}.btn.r{background:#c0392b}.btn.s{background:#ffffff26}
+.btn:disabled{opacity:.4}
+.row{display:flex;gap:8px;width:100%}.row .btn{margin-bottom:0;margin-top:8px;font-size:14px;padding:12px 6px}
+#hud{width:100%;display:flex;justify-content:space-between;align-items:center;font-weight:700;font-size:14px;gap:6px}
+#hud button{border:0;background:#ffffff26;color:#fff;border-radius:10px;padding:8px 10px;font-size:16px}
+#kt{font-size:15px}
+#hint{min-height:24px;color:#ffd84d;font-weight:700;text-align:center;font-size:14px;margin:4px 0}
+#col{display:flex;gap:2px;margin:2px 0 6px;font-size:16px;flex-wrap:wrap;justify-content:center}
+#col span{opacity:.25}#col span.on{opacity:1}
+#grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;width:min(100%,calc((100vh - 330px)*5/6));aspect-ratio:5/6}
+#grid.flip{animation:fp .7s}@keyframes fp{from{transform:rotateY(90deg) scale(.6);opacity:0}}
+.c{background:#ffffff1f;border:2px solid #ffffff22;border-radius:12px;font-size:clamp(22px,8vw,40px);display:flex;align-items:center;justify-content:center;padding:0;color:#fff}
+.c.sel{border-color:#ffd84d;background:#ffd84d44;transform:scale(1.07)}
+.c.pop{animation:pp .35s}@keyframes pp{50%{transform:scale(1.4)}}
+#ni{width:100%;padding:14px;font-size:20px;border-radius:12px;border:0;text-align:center;margin-bottom:10px;color:#000}
+#ne{color:#ff8a8a;min-height:22px;margin-bottom:8px}
+.kc{display:flex;align-items:center;gap:14px;width:100%;background:#ffffff1f;border-radius:16px;padding:12px;margin-bottom:8px;font-size:15px;transition:transform .2s;cursor:pointer}
+.kc:active{transform:scale(.95)}.kc b{font-size:18px}.kc .e{font-size:40px}
+.kc.cur{border:2px solid #ffd84d;animation:gl 1.2s infinite alternate}@keyframes gl{to{box-shadow:0 0 16px #ffd84d}}
+.kc.lock{opacity:.4}
+.ban{width:100%;text-align:center;background:linear-gradient(135deg,#7b3fe4,#e52e71);border-radius:20px;padding:18px;margin-bottom:12px}
+.ban .big{font-size:84px;animation:bn 1.4s infinite alternate}@keyframes bn{to{transform:translateY(-8px)}}
+.ban .kn{font-size:28px;font-weight:800}
+.lr{display:flex;align-items:center;gap:10px;width:100%;background:#ffffff1a;border-radius:12px;padding:8px 12px;margin-bottom:6px;cursor:pointer;transition:transform .15s}.lr:active{transform:scale(.97)}.lr.me{border:2px solid #ffd84d}
+.ke{font-size:34px}.nn{flex:1;text-align:left;font-weight:700}.rk{width:34px;font-weight:800}.sm{font-size:12px;opacity:.75;text-align:center;margin:8px 0}
+#mp{white-space:pre-line}
+.hl{position:relative;z-index:7;border-radius:10px;box-shadow:0 0 0 3px #ffd84d,0 0 0 9999px #000a;animation:hp 1s infinite alternate}@keyframes hp{to{box-shadow:0 0 0 6px #ffd84d,0 0 0 9999px #000a}}
+#tb{position:fixed;inset:0;z-index:6;display:none}
+#tt{position:fixed;left:50%;transform:translateX(-50%);width:min(92vw,400px);background:#12406a;border:2px solid #ffd84d;border-radius:16px;padding:14px;z-index:8;display:none}#tt p{margin:0 0 10px;line-height:1.4}
+#m{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;z-index:5;padding:20px}
+#mb{background:#12406a;border:2px solid #ffd84d;border-radius:18px;padding:20px;max-width:340px;width:100%;text-align:center;animation:pp .35s}
+#mb h2{margin:0 0 8px}#mb p{margin:0 0 12px;line-height:1.4}#mb .btn{margin-top:6px;margin-bottom:0}
+#toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#000c;padding:8px 14px;border-radius:20px;display:none;z-index:9}
+#adov{position:fixed;inset:0;background:#000;display:none;align-items:center;justify-content:center;z-index:10;font-size:18px;text-align:center}
+</style></head><body>
+<div id="app">
+ <div id="menu" class="scr on"><h1>🐉 Dragon Nest Merge</h1><div id="msub"></div>
+  <button class="btn g" id="b1"></button><button class="btn" id="b2">👑 Select Kingdom</button>
+  <button class="btn s" id="b3">⚙️ Settings</button><button class="btn s" id="b4">🏆 Leaderboard</button></div>
+ <div id="nm" class="scr"><h1>Welcome! 🥚</h1><p>Create a unique player name for the leaderboard</p>
+  <input id="ni" maxlength="12" placeholder="Your name" autocomplete="off"><div id="ne"></div><button class="btn g" id="nb">Create Player</button></div>
+ <div id="game" class="scr">
+  <div id="hud"><button id="mn">☰</button><span id="kt"></span><span id="en"></span></div>
+  <div id="hud" style="margin-top:6px"><span id="coins"></span><span id="sc"></span></div>
+  <div id="hint"></div><div id="col"></div><div id="grid"></div>
+  <div class="row"><button class="btn g" id="sp">🥚 Spawn (1⚡)</button><button class="btn ad" id="ae">📺 +6 ⚡</button></div>
+  <div class="row"><button class="btn" id="nest"></button><button class="btn r" id="sell">💰 Sell</button></div></div>
+ <div id="kings" class="scr"><h2>👑 Select Kingdom</h2><div id="kl" style="width:100%"></div><button class="btn s bk">← Back</button></div>
+ <div id="sett" class="scr"><h2>⚙️ Settings</h2><button class="btn" id="sm"></button><button class="btn" id="ss"></button>
+  <button class="btn" id="hp">❓ How to play</button><button class="btn g" id="sv">💾 Save now</button><button class="btn r" id="rs">🗑️ Reset game</button><button class="btn s bk">← Back</button></div>
+ <div id="lead" class="scr"><h2>🏆 Leaderboard</h2><div id="lb" style="width:100%"></div><button class="btn" id="rf">🔄 Refresh</button><button class="btn s bk">← Back</button></div>
+</div>
+<div id="m"><div id="mb"><h2 id="mh"></h2><p id="mp"></p><div id="mbt"></div></div></div>
+<div id="adov">📺 Test ad playing…<br>(YouTube shows a real ad here)</div>
+<div id="toast"></div>
+<div id="tb"></div><div id="tt"><p id="tp"></p><div class="row"><button class="btn s" id="tk">Skip</button><button class="btn g" id="tn">Next →</button></div></div>
+<script>
+const $=id=>document.getElementById(id);const YT=window.ytgame;
+const K=[
+{n:"Birds",i:"🐦",bg:"#1d5a8a,#0e2a47",t:[["Egg","🥚"],["Cracked Egg","🐣"],["Chick","🐥"],["Fledgling","🐤"],["Sparrow","🐦"],["Dove","🕊️"],["Duck","🦆"],["Swan","🦢"],["Parrot","🦜"],["Eagle","🦅"],["Peacock","🦚"],["Dragon","🐉"]]},
+{n:"Amphibians",i:"🐸",bg:"#1f7a4a,#0c3322",t:[["Spawn","🫧"],["Tadpole","🪱"],["Froglet","🐛"],["Pond Snail","🐌"],["Newt","🦎"],["Tree Frog","🐸"],["Terrapin","🐢"],["Marsh Viper","🐍"],["Gator","🐊"],["Longneck","🦕"],["Swamp Rex","🦖"],["Swamp Dragon","🐲"]]},
+{n:"Fishes",i:"🐠",bg:"#0b6a8f,#06233a",t:[["Fish Eggs","🥚"],["Fry","🐟"],["Minnow","🐠"],["Pufferling","🐡"],["Shrimp","🦐"],["Squid","🦑"],["Octopus","🐙"],["Crab","🦀"],["Lobster","🦞"],["Dolphin","🐬"],["Shark","🦈"],["Whale","🐋"]]},
+{n:"Animals",i:"🦁",bg:"#9a5b1c,#3a210a",t:[["Mouse","🐭"],["Hamster","🐹"],["Rabbit","🐰"],["Cat","🐱"],["Dog","🐶"],["Fox","🦊"],["Wolf","🐺"],["Horse","🐴"],["Cow","🐮"],["Bear","🐻"],["Lion","🦁"],["Elephant","🐘"]]},
+{n:"Humans",i:"👑",bg:"#6a2c91,#220f35",t:[["Baby","👶"],["Child","🧒"],["Student","🧑‍🎓"],["Farmer","🧑‍🌾"],["Cook","🧑‍🍳"],["Doctor","🧑‍⚕️"],["Artist","🧑‍🎨"],["Engineer","🧑‍🔧"],["Astronaut","🧑‍🚀"],["Hero","🦸"],["Wizard","🧙"],["King","👑"]]}];
+const N=30,REG=15000,NC=[300,2000,12000];
+let S={nm:"",mu:1,sf:1,tut:0,k:0,un:1,wel:0,b:K.map(()=>({g:Array(N).fill(0),mx:1,n:0,done:0})),e:6,t:Date.now(),c:0,sc:0,streak:0,d:0,last:Date.now()},sel=-1,aud=true;
+const B=()=>S.b[S.k],cap=()=>5+B().mx;
+const fmt=n=>{if(n<1000)return Math.floor(n)+'';const u=['K','M','B'];let i=-1;while(n>=1000&&i<2){n/=1000;i++}return n.toFixed(1)+u[i]};
+function toast(t){const e=$('toast');e.textContent=t;e.style.display='block';setTimeout(()=>e.style.display='none',2000)}
+function modal(h,p,btns){$('mh').textContent=h;$('mp').textContent=p;const w=$('mbt');w.innerHTML='';
+ btns.forEach(([l,f,c])=>{const b=document.createElement('button');b.className='btn '+(c||'');b.textContent=l;b.onclick=()=>{$('m').style.display='none';f&&f()};w.appendChild(b)});
+ $('m').style.display='flex'}
+function show(id){document.querySelectorAll('.scr').forEach(s=>s.classList.toggle('on',s.id===id));
+ if(id==='menu'){$('b1').textContent=S.tut<3&&!S.sc?'▶ Start':'▶ Continue';$('msub').textContent=K[S.k].i+' '+K[S.k].n+' Kingdom · '+S.nm}
+ if(id==='kings')buildK();if(id==='lead')buildL();if(id==='sett')buildS();if(id==='game')render()}
+
+// Ads (YouTube Playables SDK; fake 2s test ad outside YouTube)
+function fake(){return new Promise(r=>{$('adov').style.display='flex';setTimeout(()=>{$('adov').style.display='none';r(true)},2000)})}
+const TEST=false; // true ONLY to test fake ads in a normal browser. MUST be false in the file you upload.
+let adBusy=false; // YouTube allows one ad request at a time; overlapping requests cause errors
+async function ad(id){
+ if(adBusy){toast('Ad in progress…');return false}
+ adBusy=true;
+ try{
+  if(YT&&YT.ads)return !!(await YT.ads.requestRewardedAd(id)); // true = player watched it and earned the reward
+  if(TEST)return await fake();
+  toast('Ads only work inside YouTube');return false;
+ }catch(e){toast('No ad available right now, try again later');return false}
+ finally{adBusy=false}}
+async function inter(){
+ if(adBusy)return;adBusy=true;
+ try{if(YT&&YT.ads)await YT.ads.requestInterstitialAd();else if(TEST)await fake()}catch(e){}
+ finally{adBusy=false}}
+
+async function withAd(id,give){if(await ad(id)){give();render();save()}}
+
+// Music (generated, no files) + sfx
+let ac,mt=null,bi=0;
+const MEL=[261.6,329.6,392,440,392,329.6,293.7,329.6,392,523.3,440,392,329.6,293.7,261.6,0];
+function note(f,d,v,ty){if(!ac)return;const o=ac.createOscillator(),g=ac.createGain();o.type=ty;o.frequency.value=f;g.gain.setValueAtTime(v,ac.currentTime);g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+d);o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+d)}
+function music(){if(!S.mu||!aud||mt)return;try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();ac.resume()}catch(e){return}
+ mt=setInterval(()=>{const f=MEL[bi%16];if(f)note(f*(1+S.k*.06),.5,.05,'triangle');if(bi%4===0)note(f?f/2:130,1.2,.04,'sine');bi++},340)}
+function stopMusic(){clearInterval(mt);mt=null}
+function sfx(f){if(S.sf&&aud&&ac)note(f,.2,.08,'square')}
+document.addEventListener('pointerdown',music);
+try{if(YT&&YT.system){aud=YT.system.isAudioEnabled();YT.system.onAudioEnabledChange(v=>{aud=v;v?music():stopMusic()});
+ YT.system.onPause(()=>{stopMusic();save();push()});YT.system.onResume(()=>music())}}catch(e){}
+
+// Save: every 60s + on key events
+function save(){S.last=Date.now();const d=JSON.stringify(S);try{YT&&YT.game&&YT.game.saveData(d)}catch(e){}try{localStorage.setItem('nest2',d)}catch(e){}}
+// Online leaderboard backend. Leave "" inside YouTube Playables (external calls are not allowed there).
+// Server contract: GET API+"/board" -> [{name,k,sc,mx,done,un,seen}], POST API+"/score" with the same object.
+const API="";
+const me=()=>({name:S.nm,k:S.k,sc:Math.floor(S.sc),mx:B().mx,done:S.b.filter(x=>x.done).length,un:S.un,seen:Date.now()});
+async function net(p,o){const c=new AbortController();setTimeout(()=>c.abort(),5000);const r=await fetch(API+p,Object.assign({signal:c.signal},o));return r.json()}
+function push(){try{YT&&YT.engagement&&YT.engagement.sendScore({value:Math.floor(S.sc)})}catch(e){}
+ if(API)net('/score',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(me())}).catch(()=>{})}
+async function load(){let d;try{if(YT&&YT.game)d=await YT.game.loadData()}catch(e){}
+ if(!d)try{d=localStorage.getItem('nest2')}catch(e){}
+ if(d)try{const o=JSON.parse(d);if(o.b&&o.b.length===K.length&&o.b[0].g.length===N)S=Object.assign(S,o)}catch(e){}}
+function regen(){const now=Date.now(),c=cap();
+ if(S.e<c){const k=Math.floor((now-S.t)/REG);if(k>0){S.e=Math.min(c,S.e+k);S.t=S.e>=c?now:S.t+k*REG}}else S.t=now}
+
+// Board
+const cells=[],strip=[];
+for(let i=0;i<N;i++){const b=document.createElement('button');b.className='c';b.onclick=()=>tap(i);$('grid').appendChild(b);cells.push(b)}
+for(let i=0;i<12;i++){const s=document.createElement('span');$('col').appendChild(s);strip.push(s)}
+function tap(i){const g=B().g;
+ if(sel<0){if(g[i])sel=i}else if(sel===i)sel=-1;
+ else if(!g[i]){g[i]=g[sel];g[sel]=0;sel=-1;save()}
+ else if(g[i]===g[sel]&&g[i]<12){merge(sel,i);sel=-1}
+ else sel=i;
+ render()}
+function merge(a,b){const g=B().g,L=++g[b];g[a]=0;S.c+=2**L;S.sc+=2**L;sfx(300+L*45);
+ cells[b].classList.remove('pop');void cells[b].offsetWidth;cells[b].classList.add('pop');
+ if(S.tut===1){S.tut=2;modal('Great merge! 🎉','• ⚡ Energy refills every 15 seconds. More levels = bigger energy bar.\n• Tap a pet then 💰 Sell to free space.\n• Out of energy? Watch an ad for +6⚡.\n• Reach Level 12 to complete the kingdom and unlock the next one!',[["Got it!",()=>{S.tut=3;render();save()},'g']])}
+ if(L>B().mx){B().mx=L;discover(L)}
+ save()}
+function discover(L){const t=K[S.k].t[L-1],r=2**(L+2);S.c+=r;const nk=S.k<K.length-1;
+ if(L===12){B().done=1;S.un=Math.min(K.length,Math.max(S.un,S.k+2));
+  modal('🎉 '+K[S.k].n+' Complete!',t[1]+' '+t[0]+' reached! +💰'+fmt(r)+(nk?'\nNext kingdom unlocked: '+K[S.k+1].n+' '+K[S.k+1].i:'\nYou rule every kingdom! 👑'),
+   nk?[['Next Kingdom → '+K[S.k+1].i,()=>goK(S.k+1),'g'],['Keep playing']]:[['Keep playing',null,'g']])}
+ else modal('🎉 Congratulations! '+t[1],t[0]+' (Level '+L+') reached!\n+💰'+fmt(r),
+   [['Continue',null,'g'],['📺 Double reward',async()=>{if(await ad('level-2x')){S.c+=r;render();save()}},'ad']]);
+ if(L>=4)setTimeout(inter,1200);push();render()}
+function goK(i){S.k=i;sel=-1;show('game');const g=$('grid');g.classList.remove('flip');void g.offsetWidth;g.classList.add('flip');save()}
+
+$('sp').onclick=()=>{regen();
+ if(S.e<1)return modal('Out of energy ⚡','Watch a short ad for +6 energy, or wait: 1⚡ every 15 seconds.',[['📺 +6 ⚡',()=>withAd('energy-6',()=>S.e=Math.min(S.e+6,60)),'ad'],['Later']]);
+ const b=B(),f=[];b.g.forEach((v,i)=>{if(!v)f.push(i)});
+ if(!f.length)return toast('Board full! Merge or sell a pet');
+ if(S.e>=cap())S.t=Date.now();S.e--;
+ const L=Math.min(1+b.n+(S.tut>=3&&Math.random()<.15?1:0),11);
+ b.g[f[Math.random()*f.length|0]]=L;if(L>b.mx)b.mx=L;sfx(440);
+ if(S.tut===0&&b.g.filter(x=>x).length>=2)S.tut=1;
+ render();save()};
+$('ae').onclick=()=>withAd('energy-6',()=>{S.e=Math.min(S.e+6,60);toast('+6 ⚡')});
+$('sell').onclick=()=>{const g=B().g;if(sel<0)return toast('Tap a pet first, then Sell');
+ const v=2**(g[sel]-1);S.c+=v;g[sel]=0;sel=-1;toast('Sold for 💰'+fmt(v));render();save()};
+$('nest').onclick=()=>{const b=B();if(b.n>=3)return;const c=NC[b.n];if(S.c<c)return toast('Need 💰'+fmt(c));S.c-=c;b.n++;toast('Nest upgraded!');render();save()};
+$('mn').onclick=()=>show('menu');
+
+function render(){regen();const k=K[S.k],b=B();
+ $('app').style.background='linear-gradient('+k.bg+')';
+ $('kt').textContent=k.i+' '+k.n;$('coins').textContent='💰 '+fmt(S.c);$('sc').textContent='🏆 '+fmt(S.sc);
+ const nx=S.e<cap()?Math.max(0,Math.ceil((S.t+REG-Date.now())/1000)):0;
+ $('en').textContent='⚡ '+S.e+'/'+cap()+(nx?' +1:'+nx+'s':'');
+ $('hint').textContent=S.tut===0?'👇 Tap SPAWN to hatch your first pets':S.tut===1?'Tap a pet, then tap the SAME pet to merge!':'';
+ b.g.forEach((v,i)=>{cells[i].textContent=v?k.t[v-1][1]:'';cells[i].classList.toggle('sel',i===sel)});
+ strip.forEach((s,i)=>{s.textContent=k.t[i][1];s.classList.toggle('on',b.mx>i)});
+ $('sp').textContent=k.t[0][1]+' Spawn (1⚡)';
+ $('nest').textContent=b.n<3?'🪺 Nest Lv'+(b.n+2)+' · 💰'+fmt(NC[b.n]):'🪺 Nest MAX';$('nest').disabled=b.n>=3}
+
+
+// Guided tour: highlights every button and explains it
+const TT=[["mn","☰ Menu: opens the main menu. Your game saves automatically."],["kt","This is your current kingdom. Reach Level 12 to complete it and unlock the next one."],["en","⚡ Energy: every Spawn costs 1⚡. You get 1⚡ every 15 seconds, and the maximum grows as you reach higher levels."],["coins","💰 Coins: earned by merging and selling pets. Spend them on Nest upgrades."],["sc","🏆 Score: your points on the leaderboard."],["col","Collection: the pets you have discovered. Reach the last one to finish the kingdom."],["grid","The 5×6 board. Tap a pet, then tap the SAME pet to merge them into the next level. Tap an empty cell to move a pet."],["sp","Spawn: costs 1⚡ and places a new pet on the board."],["ae","📺 +6⚡: optionally watch an ad to get 6 extra energy."],["nest","🪺 Nest: spend coins so Spawn creates higher-level pets."],["sell","💰 Sell: tap a pet, then press Sell to turn it into coins and free up space."]];
+function tour(i){document.querySelectorAll('.hl').forEach(e=>e.classList.remove('hl'));
+ if(i>=TT.length){$('tb').style.display=$('tt').style.display='none';render();return}
+ const e=$(TT[i][0]);e.classList.add('hl');$('tb').style.display='block';
+ const t=$('tt');t.style.display='block';$('tp').textContent=(i+1)+'/'+TT.length+'  '+TT[i][1];
+ const top=e.getBoundingClientRect().top>innerHeight/2;t.style.top=top?'12px':'auto';t.style.bottom=top?'auto':'12px';
+ $('tn').textContent=i===TT.length-1?'Start playing ✔':'Next →';$('tn').onclick=()=>tour(i+1);$('tk').onclick=()=>tour(TT.length)}
+$('hp').onclick=()=>{show('game');setTimeout(()=>tour(0),450)};
+
+// Menu screens
+$('b1').onclick=()=>{show('game');music();
+ if(S.tut===0&&!S.wel){S.wel=1;modal('Welcome '+S.nm.split('#')[0]+'! 👋','Merge matching pets to grow from '+K[S.k].t[0][0]+' to '+K[S.k].t[11][0]+' (Level 12) and complete the kingdom!',[["Show me around",()=>tour(0),'g']])}
+ else if(S.tut>=3)daily()};
+$('b2').onclick=()=>show('kings');$('b3').onclick=()=>show('sett');$('b4').onclick=()=>show('lead');
+document.querySelectorAll('.bk').forEach(b=>b.onclick=()=>show('menu'));
+function buildK(){$('kl').innerHTML='';K.forEach((k,i)=>{const d=document.createElement('div'),lk=i>=S.un;
+ d.className='kc'+(i===S.k?' cur':'')+(lk?' lock':'');
+ d.innerHTML='<div class="e">'+(lk?'🔒':k.i)+'</div><div><b>'+k.n+'</b><br>'+(lk?'Complete '+K[i-1].n+' first':S.b[i].done?'✅ Completed':'Best: Level '+S.b[i].mx+'/12')+'</div>';
+ d.onclick=()=>lk?toast('Complete '+K[i-1].n+' first'):goK(i);$('kl').appendChild(d)})}
+const ago=t=>{const m=Math.max(1,Math.round((Date.now()-t)/60000));return m<60?m+' min ago':Math.round(m/60)+' h ago'};
+function detail(r,kk,on){const t=kk.t[Math.min(Math.max(r.mx||1,1),12)-1];
+ modal(kk.i+' '+String(r.name).slice(0,20),'Kingdom: '+kk.n+'\nScore: 🏆 '+fmt(+r.sc||0)+'\nBest pet: '+t[1]+' '+t[0]+' (Lv '+(r.mx||1)+'/12)\nKingdoms completed: '+(r.done||0)+'/'+K.length+'\nKingdoms unlocked: '+(r.un||1)+'/'+K.length+'\nStatus: '+(on?'🟢 Online now':'⚫ Last seen '+ago(r.seen)),[['Close',null,'g']])}
+async function buildL(){const lb=$('lb'),k=K[S.k];lb.innerHTML='';
+ const ban=document.createElement('div');ban.className='ban';
+ ban.innerHTML='<div class="big">'+k.i+'</div><div class="kn">'+k.n+' Kingdom</div>';
+ const nm=document.createElement('div');nm.textContent=S.nm+' · 🏆 '+fmt(S.sc);ban.appendChild(nm);lb.appendChild(ban);
+ const list=document.createElement('div');list.textContent='Loading…';lb.appendChild(list);
+ let rows=[];if(API){try{rows=await net('/board')}catch(e){}}
+ rows=(Array.isArray(rows)?rows:[]).filter(r=>r&&r.name&&r.name!==S.nm);rows.push(me());
+ rows.sort((a,b)=>(+b.sc||0)-(+a.sc||0));list.textContent='';
+ rows.forEach((r,i)=>{const kk=K[r.k]||K[0],mine=r.name===S.nm,on=mine||Date.now()-r.seen<3e5;
+  const d=document.createElement('div');d.className='lr'+(mine?' me':'');
+  const mk=(c,t)=>{const e=document.createElement('span');e.className=c;e.textContent=t;return e};
+  d.append(mk('rk','#'+(i+1)),mk('ke',kk.i),mk('nn',String(r.name).slice(0,20)+(on?' 🟢':'')),mk('',fmt(+r.sc||0)));
+  d.onclick=()=>detail(r,kk,on);list.appendChild(d)});
+ if(!API){const n=document.createElement('div');n.className='sm';n.textContent='Other players will appear here once online rankings are connected.';lb.appendChild(n)}}
+$('rf').onclick=buildL;
+function buildS(){$('sm').textContent='🎵 Music: '+(S.mu?'ON':'OFF');$('ss').textContent='🔊 Sound FX: '+(S.sf?'ON':'OFF')}
+$('sm').onclick=()=>{S.mu=S.mu?0:1;S.mu?music():stopMusic();buildS();save()};
+$('ss').onclick=()=>{S.sf=S.sf?0:1;buildS();save()};
+$('sv').onclick=()=>{save();push();toast('💾 Saved')};
+$('rs').onclick=()=>modal('Reset game?','All progress will be lost.',[['Cancel'],['Yes, reset',()=>{try{localStorage.removeItem('nest2')}catch(e){}location.reload()},'r']]);
+$('nb').onclick=()=>{const v=$('ni').value.trim();
+ if(!/^[A-Za-z0-9_]{3,12}$/.test(v))return $('ne').textContent='3-12 letters, numbers or _ only';
+ S.nm=v+'#'+(1000+Math.random()*9000|0);save();show('menu')};
+
+function daily(){const d=Math.floor(Date.now()/864e5);if(S.d===d)return;
+ S.streak=S.d===d-1?S.streak%7+1:1;S.d=d;const m=S.streak===7?3:1,en=6*S.streak*m,co=100*S.streak*m;
+ modal('Daily Gift 🎁 Day '+S.streak+'/7','Come back daily! Day 7 = triple gift.\nToday: ⚡'+en+' + 💰'+co,
+ [['Claim',()=>{S.e=Math.min(S.e+en,60);S.c+=co;render();save()},'g'],
+  ['📺 Claim 2x',async()=>{const k=(await ad('daily-2x'))?2:1;S.e=Math.min(S.e+en*k,60);S.c+=co*k;render();save()},'ad']])}
+
+(async()=>{await load();show(S.nm?'menu':'nm');
+ try{YT&&YT.game&&YT.game.firstFrameReady()}catch(e){}
+ try{YT&&YT.game&&YT.game.gameReady()}catch(e){}
+ setInterval(()=>{if($('game').classList.contains('on'))render()},1000);
+ setInterval(()=>{save();push();toast('💾 Auto-saved')},60000);
+})();
+</script></body></html>
