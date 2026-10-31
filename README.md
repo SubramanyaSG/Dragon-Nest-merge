@@ -58,8 +58,8 @@ const TEST=false; // true ONLY to test fake ads in a normal browser. MUST be fal
 No installation needed.
 
 ```bash
-git clone https://github.com/<your-username>/<your-repo>.git
-cd <your-repo>
+git clone https://github.com/SubramanyaSG/Dragon-Nest-merge.git
+cd /SubramanyaSG/Dragon-Nest-merge
 # open index.html in your browser, or serve it:
 python3 -m http.server 8000
 # then visit http://localhost:8000
@@ -120,4 +120,4 @@ Add your preferred license here (for example, MIT). Pet emojis are standard Unic
 
 ## 🙌 Credits
 
-Made by **<your name>**. Feedback and ideas are welcome. Open an issue or a pull request.
+Made by **SubramanyaSG**. Feedback and ideas are welcome. Open an issue or a pull request.
