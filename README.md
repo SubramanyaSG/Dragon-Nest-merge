@@ -70,7 +70,7 @@ python3 -m http.server 8000
 1. Set `TEST=true` in a demo copy of `index.html` so reviewers can see the ad flow.
 2. Push the repo to GitHub.
 3. Go to **Settings → Pages**, choose your branch and the root folder, then save.
-4. Your game will be live at `https://<your-username>.github.io/<your-repo>/`.
+4. Your game will be live at `https://subramanyasg.github.io/Dragon-Nest-merge/`.
 
 ## 📦 Submit to YouTube Playables
 
