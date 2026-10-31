@@ -56,7 +56,7 @@ h1{font-size:30px;text-align:center;margin:40px 0 4px}h2{margin:14px 0}
  <div id="game" class="scr">
   <div id="hud"><button id="mn">☰</button><span id="kt"></span><span id="en"></span></div>
   <div id="hud" style="margin-top:6px"><span id="coins"></span><span id="sc"></span></div>
-  <div id="hint"></div><div id="col"></div><div id="grid"></div>
+  <div id="fr" class="sm" style="margin:2px 0 0"></div><div id="hint"></div><div id="col"></div><div id="grid"></div>
   <div class="row"><button class="btn g" id="sp">🥚 Spawn (1⚡)</button><button class="btn ad" id="ae">📺 +6 ⚡</button></div>
   <div class="row"><button class="btn" id="nest"></button><button class="btn r" id="sell">💰 Sell</button></div></div>
  <div id="kings" class="scr"><h2>👑 Select Kingdom</h2><div id="kl" style="width:100%"></div><button class="btn s bk">← Back</button></div>
@@ -75,8 +75,10 @@ const K=[
 {n:"Amphibians",i:"🐸",bg:"#1f7a4a,#0c3322",t:[["Spawn","🫧"],["Tadpole","🪱"],["Froglet","🐛"],["Pond Snail","🐌"],["Newt","🦎"],["Tree Frog","🐸"],["Terrapin","🐢"],["Marsh Viper","🐍"],["Gator","🐊"],["Longneck","🦕"],["Swamp Rex","🦖"],["Swamp Dragon","🐲"]]},
 {n:"Fishes",i:"🐠",bg:"#0b6a8f,#06233a",t:[["Fish Eggs","🥚"],["Fry","🐟"],["Minnow","🐠"],["Pufferling","🐡"],["Shrimp","🦐"],["Squid","🦑"],["Octopus","🐙"],["Crab","🦀"],["Lobster","🦞"],["Dolphin","🐬"],["Shark","🦈"],["Whale","🐋"]]},
 {n:"Animals",i:"🦁",bg:"#9a5b1c,#3a210a",t:[["Mouse","🐭"],["Hamster","🐹"],["Rabbit","🐰"],["Cat","🐱"],["Dog","🐶"],["Fox","🦊"],["Wolf","🐺"],["Horse","🐴"],["Cow","🐮"],["Bear","🐻"],["Lion","🦁"],["Elephant","🐘"]]},
-{n:"Humans",i:"👑",bg:"#6a2c91,#220f35",t:[["Baby","👶"],["Child","🧒"],["Student","🧑‍🎓"],["Farmer","🧑‍🌾"],["Cook","🧑‍🍳"],["Doctor","🧑‍⚕️"],["Artist","🧑‍🎨"],["Engineer","🧑‍🔧"],["Astronaut","🧑‍🚀"],["Hero","🦸"],["Wizard","🧙"],["King","👑"]]}];
-const N=30,REG=15000,NC=[300,2000,12000];
+{n:"Humans",i:"👑",bg:"#6a2c91,#220f35",t:[["Baby","👶"],["Child","🧒"],["Student","🧑‍🎓"],["Farmer","🧑‍🌾"],["Cook","🧑‍🍳"],["Doctor","🧑‍⚕️"],["Artist","🧑‍🎨"],["Engineer","🧑‍🔧"],["Astronaut","🧑‍🚀"],["Hero","🦸"],["Wizard","🧙"],["King","👑"]]},
+{n:"Bugs",i:"🐞",bg:"#a3283c,#33080f",t:[["Egg","🥚"],["Caterpillar","🐛"],["Ant","🐜"],["Fly","🪰"],["Mosquito","🦟"],["Cricket","🦗"],["Ladybug","🐞"],["Bee","🐝"],["Beetle","🪲"],["Scorpion","🦂"],["Spider","🕷️"],["Butterfly","🦋"]]},
+{n:"Plants",i:"🌳",bg:"#6a9b1f,#243808",t:[["Seed","🌰"],["Sprout","🌱"],["Leaf","🌿"],["Clover","🍀"],["Tulip","🌷"],["Sunflower","🌻"],["Rose","🌹"],["Cactus","🌵"],["Palm","🌴"],["Oak","🌳"],["Redwood","🌲"],["World Tree","🎄"]]}];
+const N=30,REG=5000,NC=[250,1600,9500];
 let S={nm:"",mu:1,sf:1,tut:0,k:0,un:1,wel:0,b:K.map(()=>({g:Array(N).fill(0),mx:1,n:0,done:0})),e:6,t:Date.now(),c:0,sc:0,streak:0,d:0,last:Date.now()},sel=-1,aud=true;
 const B=()=>S.b[S.k],cap=()=>5+B().mx;
 const fmt=n=>{if(n<1000)return Math.floor(n)+'';const u=['K','M','B'];let i=-1;while(n>=1000&&i<2){n/=1000;i++}return n.toFixed(1)+u[i]};
@@ -90,7 +92,7 @@ function show(id){document.querySelectorAll('.scr').forEach(s=>s.classList.toggl
 
 // Ads (YouTube Playables SDK; fake 2s test ad outside YouTube)
 function fake(){return new Promise(r=>{$('adov').style.display='flex';setTimeout(()=>{$('adov').style.display='none';r(true)},2000)})}
-const TEST=false; // true ONLY to test fake ads in a normal browser. MUST be false in the file you upload.
+const TEST=true; // true ONLY to test fake ads in a normal browser. MUST be false in the file you upload.
 let adBusy=false; // YouTube allows one ad request at a time; overlapping requests cause errors
 async function ad(id){
  if(adBusy){toast('Ad in progress…');return false}
@@ -131,8 +133,9 @@ function push(){try{YT&&YT.engagement&&YT.engagement.sendScore({value:Math.floor
  if(API)net('/score',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(me())}).catch(()=>{})}
 async function load(){let d;try{if(YT&&YT.game)d=await YT.game.loadData()}catch(e){}
  if(!d)try{d=localStorage.getItem('nest2')}catch(e){}
- if(d)try{const o=JSON.parse(d);if(o.b&&o.b.length===K.length&&o.b[0].g.length===N)S=Object.assign(S,o)}catch(e){}}
+ if(d)try{const o=JSON.parse(d);if(o.b&&o.b.length<=K.length&&o.b[0].g.length===N){while(o.b.length<K.length)o.b.push({g:Array(N).fill(0),mx:1,n:0,done:0});S=Object.assign(S,o)}}catch(e){}}
 function regen(){const now=Date.now(),c=cap();
+ if(S.t>now)S.t=now;
  if(S.e<c){const k=Math.floor((now-S.t)/REG);if(k>0){S.e=Math.min(c,S.e+k);S.t=S.e>=c?now:S.t+k*REG}}else S.t=now}
 
 // Board
@@ -147,7 +150,7 @@ function tap(i){const g=B().g;
  render()}
 function merge(a,b){const g=B().g,L=++g[b];g[a]=0;S.c+=2**L;S.sc+=2**L;sfx(300+L*45);
  cells[b].classList.remove('pop');void cells[b].offsetWidth;cells[b].classList.add('pop');
- if(S.tut===1){S.tut=2;modal('Great merge! 🎉','• ⚡ Energy refills every 15 seconds. More levels = bigger energy bar.\n• Tap a pet then 💰 Sell to free space.\n• Out of energy? Watch an ad for +6⚡.\n• Reach Level 12 to complete the kingdom and unlock the next one!',[["Got it!",()=>{S.tut=3;render();save()},'g']])}
+ if(S.tut===1){S.tut=2;modal('Great merge! 🎉','• ⚡ Energy refills every 5 seconds. More levels = bigger energy bar.\n• Tap a pet then 💰 Sell to free space.\n• Out of energy? Watch an ad for +6⚡.\n• Reach Level 12 to complete the kingdom and unlock the next one!',[["Got it!",()=>{S.tut=3;render();save()},'g']])}
  if(L>B().mx){B().mx=L;discover(L)}
  save()}
 function discover(L){const t=K[S.k].t[L-1],r=2**(L+2);S.c+=r;const nk=S.k<K.length-1;
@@ -160,7 +163,7 @@ function discover(L){const t=K[S.k].t[L-1],r=2**(L+2);S.c+=r;const nk=S.k<K.leng
 function goK(i){S.k=i;sel=-1;show('game');const g=$('grid');g.classList.remove('flip');void g.offsetWidth;g.classList.add('flip');save()}
 
 $('sp').onclick=()=>{regen();
- if(S.e<1)return modal('Out of energy ⚡','Watch a short ad for +6 energy, or wait: 1⚡ every 15 seconds.',[['📺 +6 ⚡',()=>withAd('energy-6',()=>S.e=Math.min(S.e+6,60)),'ad'],['Later']]);
+ if(S.e<1)return modal('Out of energy ⚡','Watch a short ad for +6 energy, or wait: 1⚡ every 5 seconds.',[['📺 +6 ⚡',()=>withAd('energy-6',()=>S.e=Math.min(S.e+6,60)),'ad'],['Later']]);
  const b=B(),f=[];b.g.forEach((v,i)=>{if(!v)f.push(i)});
  if(!f.length)return toast('Board full! Merge or sell a pet');
  if(S.e>=cap())S.t=Date.now();S.e--;
@@ -170,15 +173,16 @@ $('sp').onclick=()=>{regen();
  render();save()};
 $('ae').onclick=()=>withAd('energy-6',()=>{S.e=Math.min(S.e+6,60);toast('+6 ⚡')});
 $('sell').onclick=()=>{const g=B().g;if(sel<0)return toast('Tap a pet first, then Sell');
- const v=2**(g[sel]-1);S.c+=v;g[sel]=0;sel=-1;toast('Sold for 💰'+fmt(v));render();save()};
+ const v=Math.floor(2**g[sel]*.75);S.c+=v;g[sel]=0;sel=-1;toast('Sold for 💰'+fmt(v));render();save()};
 $('nest').onclick=()=>{const b=B();if(b.n>=3)return;const c=NC[b.n];if(S.c<c)return toast('Need 💰'+fmt(c));S.c-=c;b.n++;toast('Nest upgraded!');render();save()};
 $('mn').onclick=()=>show('menu');
 
 function render(){regen();const k=K[S.k],b=B();
  $('app').style.background='linear-gradient('+k.bg+')';
  $('kt').textContent=k.i+' '+k.n;$('coins').textContent='💰 '+fmt(S.c);$('sc').textContent='🏆 '+fmt(S.sc);
- const nx=S.e<cap()?Math.max(0,Math.ceil((S.t+REG-Date.now())/1000)):0;
+ const miss=cap()-S.e,nx=miss>0?Math.max(0,Math.ceil((S.t+REG-Date.now())/1000)):0,fl=miss>0?nx+(miss-1)*REG/1000:0;
  $('en').textContent='⚡ '+S.e+'/'+cap()+(nx?' +1:'+nx+'s':'');
+ $('fr').textContent=miss>0?'Full recharge in '+(fl>=60?Math.floor(fl/60)+'m '+fl%60+'s':fl+'s'):'⚡ Energy full';
  $('hint').textContent=S.tut===0?'👇 Tap SPAWN to hatch your first pets':S.tut===1?'Tap a pet, then tap the SAME pet to merge!':'';
  b.g.forEach((v,i)=>{cells[i].textContent=v?k.t[v-1][1]:'';cells[i].classList.toggle('sel',i===sel)});
  strip.forEach((s,i)=>{s.textContent=k.t[i][1];s.classList.toggle('on',b.mx>i)});
@@ -187,7 +191,7 @@ function render(){regen();const k=K[S.k],b=B();
 
 
 // Guided tour: highlights every button and explains it
-const TT=[["mn","☰ Menu: opens the main menu. Your game saves automatically."],["kt","This is your current kingdom. Reach Level 12 to complete it and unlock the next one."],["en","⚡ Energy: every Spawn costs 1⚡. You get 1⚡ every 15 seconds, and the maximum grows as you reach higher levels."],["coins","💰 Coins: earned by merging and selling pets. Spend them on Nest upgrades."],["sc","🏆 Score: your points on the leaderboard."],["col","Collection: the pets you have discovered. Reach the last one to finish the kingdom."],["grid","The 5×6 board. Tap a pet, then tap the SAME pet to merge them into the next level. Tap an empty cell to move a pet."],["sp","Spawn: costs 1⚡ and places a new pet on the board."],["ae","📺 +6⚡: optionally watch an ad to get 6 extra energy."],["nest","🪺 Nest: spend coins so Spawn creates higher-level pets."],["sell","💰 Sell: tap a pet, then press Sell to turn it into coins and free up space."]];
+const TT=[["mn","☰ Menu: opens the main menu. Your game saves automatically."],["kt","This is your current kingdom. Reach Level 12 to complete it and unlock the next one."],["en","⚡ Energy: every Spawn costs 1⚡. You get 1⚡ every 5 seconds, and the maximum grows as you reach higher levels."],["coins","💰 Coins: earned by merging and selling pets. Spend them on Nest upgrades."],["sc","🏆 Score: your points on the leaderboard."],["col","Collection: the pets you have discovered. Reach the last one to finish the kingdom."],["grid","The 5×6 board. Tap a pet, then tap the SAME pet to merge them into the next level. Tap an empty cell to move a pet."],["sp","Spawn: costs 1⚡ and places a new pet on the board."],["ae","📺 +6⚡: optionally watch an ad to get 6 extra energy."],["nest","🪺 Nest: spend coins so Spawn creates higher-level pets."],["sell","💰 Sell: tap a pet, then press Sell to turn it into coins and free up space."]];
 function tour(i){document.querySelectorAll('.hl').forEach(e=>e.classList.remove('hl'));
  if(i>=TT.length){$('tb').style.display=$('tt').style.display='none';render();return}
  const e=$(TT[i][0]);e.classList.add('hl');$('tb').style.display='block';
@@ -206,23 +210,24 @@ function buildK(){$('kl').innerHTML='';K.forEach((k,i)=>{const d=document.create
  d.className='kc'+(i===S.k?' cur':'')+(lk?' lock':'');
  d.innerHTML='<div class="e">'+(lk?'🔒':k.i)+'</div><div><b>'+k.n+'</b><br>'+(lk?'Complete '+K[i-1].n+' first':S.b[i].done?'✅ Completed':'Best: Level '+S.b[i].mx+'/12')+'</div>';
  d.onclick=()=>lk?toast('Complete '+K[i-1].n+' first'):goK(i);$('kl').appendChild(d)})}
+const RIV=[["Egg Rookie",0,40,2,0,1],["Tiny Tim",0,120,3,0,1],["Sir Flappington",0,500,6,0,1],["Pebble the Newt",1,1500,4,1,2],["Ribbit Royal",1,4000,8,1,2],["Captain Finley",2,9000,7,2,3],["Luna Wolfheart",3,18000,8,3,4],["Professor Bumble",5,35000,6,5,6],["Queen Mira",4,60000,9,4,5],["Grandmaster Oak",6,100000,5,6,7],["Phoenix Rider Kai",4,160000,12,5,6],["Dragon Lord Zephyr",6,250000,12,7,7]].map(a=>({name:a[0],k:a[1],sc:a[2],mx:a[3],done:a[4],un:a[5],f:1,seen:0}));
 const ago=t=>{const m=Math.max(1,Math.round((Date.now()-t)/60000));return m<60?m+' min ago':Math.round(m/60)+' h ago'};
 function detail(r,kk,on){const t=kk.t[Math.min(Math.max(r.mx||1,1),12)-1];
- modal(kk.i+' '+String(r.name).slice(0,20),'Kingdom: '+kk.n+'\nScore: 🏆 '+fmt(+r.sc||0)+'\nBest pet: '+t[1]+' '+t[0]+' (Lv '+(r.mx||1)+'/12)\nKingdoms completed: '+(r.done||0)+'/'+K.length+'\nKingdoms unlocked: '+(r.un||1)+'/'+K.length+'\nStatus: '+(on?'🟢 Online now':'⚫ Last seen '+ago(r.seen)),[['Close',null,'g']])}
+ modal(kk.i+' '+String(r.name).slice(0,20),'Kingdom: '+kk.n+'\nScore: 🏆 '+fmt(+r.sc||0)+'\nBest pet: '+t[1]+' '+t[0]+' (Lv '+(r.mx||1)+'/12)\nKingdoms completed: '+(r.done||0)+'/'+K.length+'\nKingdoms unlocked: '+(r.un||1)+'/'+K.length+'\nStatus: '+(r.f?'🤖 Fictional rival: beat their score!':on?'🟢 Online now':'⚫ Last seen '+ago(r.seen)),[['Close',null,'g']])}
 async function buildL(){const lb=$('lb'),k=K[S.k];lb.innerHTML='';
  const ban=document.createElement('div');ban.className='ban';
  ban.innerHTML='<div class="big">'+k.i+'</div><div class="kn">'+k.n+' Kingdom</div>';
  const nm=document.createElement('div');nm.textContent=S.nm+' · 🏆 '+fmt(S.sc);ban.appendChild(nm);lb.appendChild(ban);
  const list=document.createElement('div');list.textContent='Loading…';lb.appendChild(list);
  let rows=[];if(API){try{rows=await net('/board')}catch(e){}}
- rows=(Array.isArray(rows)?rows:[]).filter(r=>r&&r.name&&r.name!==S.nm);rows.push(me());
+ rows=(Array.isArray(rows)?rows:[]).filter(r=>r&&r.name&&r.name!==S.nm);rows.push(me());RIV.forEach(r=>rows.push(r));
  rows.sort((a,b)=>(+b.sc||0)-(+a.sc||0));list.textContent='';
  rows.forEach((r,i)=>{const kk=K[r.k]||K[0],mine=r.name===S.nm,on=mine||Date.now()-r.seen<3e5;
   const d=document.createElement('div');d.className='lr'+(mine?' me':'');
   const mk=(c,t)=>{const e=document.createElement('span');e.className=c;e.textContent=t;return e};
-  d.append(mk('rk','#'+(i+1)),mk('ke',kk.i),mk('nn',String(r.name).slice(0,20)+(on?' 🟢':'')),mk('',fmt(+r.sc||0)));
+  d.append(mk('rk','#'+(i+1)),mk('ke',kk.i),mk('nn',String(r.name).slice(0,20)+(r.f?' 🤖':on?' 🟢':'')),mk('',fmt(+r.sc||0)));
   d.onclick=()=>detail(r,kk,on);list.appendChild(d)});
- if(!API){const n=document.createElement('div');n.className='sm';n.textContent='Other players will appear here once online rankings are connected.';lb.appendChild(n)}}
+ if(!API){const n=document.createElement('div');n.className='sm';n.textContent='🤖 Rivals are fictional characters. Beat their scores to climb the board!';lb.appendChild(n)}}
 $('rf').onclick=buildL;
 function buildS(){$('sm').textContent='🎵 Music: '+(S.mu?'ON':'OFF');$('ss').textContent='🔊 Sound FX: '+(S.sf?'ON':'OFF')}
 $('sm').onclick=()=>{S.mu=S.mu?0:1;S.mu?music():stopMusic();buildS();save()};
@@ -242,7 +247,7 @@ function daily(){const d=Math.floor(Date.now()/864e5);if(S.d===d)return;
 (async()=>{await load();show(S.nm?'menu':'nm');
  try{YT&&YT.game&&YT.game.firstFrameReady()}catch(e){}
  try{YT&&YT.game&&YT.game.gameReady()}catch(e){}
- setInterval(()=>{if($('game').classList.contains('on'))render()},1000);
+ setInterval(()=>{if($('game').classList.contains('on'))render()},250);
  setInterval(()=>{save();push();toast('💾 Auto-saved')},60000);
 })();
 </script></body></html>
