@@ -83,7 +83,7 @@ const K=[
 {n:"Robots",i:"🤖",bg:"#2a6f97,#0b1b2b",t:[["Bolt","🔩"],["Gear","⚙️"],["Battery","🔋"],["Spark Core","💡"],["Antenna","📡"],["Computer","🖥️"],["Robo Arm","🦾"],["Robo Leg","🦿"],["Drone","🚁"],["Auto Car","🚗"],["AI Core","🧠"],["Mega Robot","🤖"]]},
 {n:"Space",i:"🚀",bg:"#14206b,#030312",t:[["Space Rock","🪨"],["Comet","☄️"],["Moon","🌙"],["Satellite","🛰️"],["Rocket","🚀"],["Alien","👽"],["UFO","🛸"],["Earth","🌍"],["Saturn","🪐"],["Sun","☀️"],["Star","⭐"],["Galaxy","🌌"]]}];
 const N=30,REG=5000,NC=[250,1600,9500];
-let S={nm:"",mu:1,sf:1,tut:0,k:0,un:1,wel:0,b:K.map(()=>({g:Array(N).fill(0),mx:1,n:0,done:0,c:0})),e:6,t:Date.now(),c:0,sc:0,streak:0,d:0,last:Date.now()},sel=-1,aud=true;
+let S={nm:"",mu:1,sf:1,tut:0,k:0,un:1,wel:0,b:K.map(()=>({g:Array(N).fill(0),mx:1,n:0,done:0,c:0,e:6,t:Date.now()})),c:0,sc:0,streak:0,d:0,last:Date.now()},sel=-1,aud=true;
 const B=()=>S.b[S.k],cap=()=>5+B().mx;
 const fmt=n=>{if(n<1000)return Math.floor(n)+'';const u=['K','M','B'];let i=-1;while(n>=1000&&i<2){n/=1000;i++}return n.toFixed(1)+u[i]};
 function toast(t){const e=$('toast');e.textContent=t;e.style.display='block';setTimeout(()=>e.style.display='none',2000)}
@@ -165,16 +165,18 @@ function push(){try{YT&&YT.engagement&&YT.engagement.sendScore({value:Math.floor
  if(API)net('/score',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(me())}).catch(()=>{})}
 async function load(){let d;try{if(YT&&YT.game)d=await YT.game.loadData()}catch(e){}
  if(!d)try{d=localStorage.getItem('nest2')}catch(e){}
- if(d)try{const o=JSON.parse(d);if(o.b&&o.b.length<=K.length&&o.b[0].g.length===N){while(o.b.length<K.length)o.b.push({g:Array(N).fill(0),mx:1,n:0,done:0,c:0});S=Object.assign(S,o)}}catch(e){}
+ if(d)try{const o=JSON.parse(d);if(o.b&&o.b.length<=K.length&&o.b[0].g.length===N){while(o.b.length<K.length)o.b.push({g:Array(N).fill(0),mx:1,n:0,done:0,c:0,e:6,t:Date.now()});S=Object.assign(S,o)}}catch(e){}
  S.b.forEach(b=>{if(typeof b.c!=='number')b.c=0});
  if(!S.cm){S.b[S.k].c+=S.c||0;S.c=0;S.cm=1}
  if(S.tut===2)S.tut=3;
- if(S.e>cap())S.e=cap()}
+ S.b.forEach(b=>{if(typeof b.e!=='number'){b.e=6;b.t=Date.now()}});
+ if(!S.em){const b=S.b[S.k];if(typeof S.e==='number'){b.e=S.e;b.t=S.t||Date.now()}S.em=1}
+ S.b.forEach(b=>{const c=5+b.mx;if(b.e>c)b.e=c})}
 // add energy but never go above the Max energy limit (never lowers energy that is already above it)
-const addE=n=>{S.e=Math.max(S.e,Math.min(S.e+n,cap()))};
-function regen(){const now=Date.now(),c=cap();
- if(S.t>now)S.t=now;
- if(S.e<c){const k=Math.floor((now-S.t)/REG);if(k>0){S.e=Math.min(c,S.e+k);S.t=S.e>=c?now:S.t+k*REG}}else S.t=now}
+const addE=n=>{const b=B();b.e=Math.max(b.e,Math.min(b.e+n,cap()))};
+const eNow=b=>{const c=5+b.mx;return b.e>=c?b.e:Math.min(c,b.e+Math.floor((Date.now()-b.t)/REG))};
+function regen(){const b=B(),now=Date.now(),c=cap();if(b.t>now)b.t=now;
+ if(b.e<c){const k=Math.floor((now-b.t)/REG);if(k>0){b.e=Math.min(c,b.e+k);b.t=b.e>=c?now:b.t+k*REG}}else b.t=now}
 
 // Board
 const cells=[],strip=[];
@@ -201,15 +203,15 @@ function discover(L){sfx('win');const t=K[S.k].t[L-1],r=2**(L+2),bb=B();bb.c+=r;
 function goK(i){S.k=i;sel=-1;show('game');const g=$('grid');g.classList.remove('flip');void g.offsetWidth;g.classList.add('flip');save()}
 
 $('sp').onclick=()=>{regen();
- if(S.e<1)return modal('Out of energy ⚡','Watch a short ad for +6 energy, or wait: 1⚡ every 5 seconds.',[['📺 +6 ⚡',()=>withAd('energy-6',()=>addE(6)),'ad'],['Later']]);
+ if(B().e<1)return modal('Out of energy ⚡','Watch a short ad for +6 energy, or wait: 1⚡ every 5 seconds.',[['📺 +6 ⚡',()=>withAd('energy-6',()=>addE(6)),'ad'],['Later']]);
  const b=B(),f=[];b.g.forEach((v,i)=>{if(!v)f.push(i)});
  if(!f.length){sfx('err');return toast('Board full! Merge or sell a pet')}
- if(S.e>=cap())S.t=Date.now();S.e--;
+ if(b.e>=cap())b.t=Date.now();b.e--;
  const top=1+b.n,L=S.tut>=3?1+Math.floor(Math.random()*top):1; // random pet from level 1 up to the Nest level (tutorial: always level 1)
  b.g[f[Math.random()*f.length|0]]=L;if(L>b.mx)b.mx=L;sfx('spawn');
  if(S.tut===0&&b.g.filter(x=>x).length>=2)S.tut=1;
  render();save()};
-$('ae').onclick=()=>S.e>=cap()?toast('⚡ Energy is already full'):withAd('energy-6',()=>{addE(6);toast('+6 ⚡')});
+$('ae').onclick=()=>B().e>=cap()?toast('⚡ Energy is already full'):withAd('energy-6',()=>{addE(6);toast('+6 ⚡')});
 $('sell').onclick=()=>{const g=B().g;if(sel<0)return toast('Tap a pet first, then Sell');
  const v=Math.floor(2**g[sel]*.75);B().c+=v;g[sel]=0;sel=-1;toast('Sold for 💰'+fmt(v));sfx('sell');render();save()};
 $('nest').onclick=()=>{const b=B();if(b.n>=3)return;const c=NC[b.n];if(b.c<c){sfx('err');return toast('Need 💰'+fmt(c)+' '+K[S.k].n+' coins')}b.c-=c;b.n++;toast('Nest upgraded!');render();save()};
@@ -218,8 +220,8 @@ $('mn').onclick=()=>show('menu');
 function render(){regen();const k=K[S.k],b=B();
  $('app').style.background='linear-gradient('+k.bg+')';
  $('kt').textContent=k.i+' '+k.n;$('coins').textContent='💰 '+fmt(b.c);$('sc').textContent='🏆 '+fmt(S.sc);
- const miss=cap()-S.e,nx=miss>0?Math.max(0,Math.ceil((S.t+REG-Date.now())/1000)):0,fl=miss>0?nx+(miss-1)*REG/1000:0;
- $('en').textContent='⚡ '+S.e+'/'+cap()+(nx?' +1:'+nx+'s':'');
+ const miss=cap()-b.e,nx=miss>0?Math.max(0,Math.ceil((b.t+REG-Date.now())/1000)):0,fl=miss>0?nx+(miss-1)*REG/1000:0;
+ $('en').textContent='⚡ '+b.e+'/'+cap()+(nx?' +1:'+nx+'s':'');
  $('fr').textContent=miss>0?'Full recharge in '+(fl>=60?Math.floor(fl/60)+'m '+fl%60+'s':fl+'s'):'⚡ Energy full';
  $('hint').textContent=S.tut===0?'👇 Tap SPAWN to hatch your first pets':S.tut===1?'Tap a pet, then tap the SAME pet to merge!':'';
  b.g.forEach((v,i)=>{cells[i].textContent=v?k.t[v-1][1]:'';cells[i].classList.toggle('sel',i===sel)});
@@ -229,7 +231,7 @@ function render(){regen();const k=K[S.k],b=B();
 
 
 // Guided tour: highlights every button and explains it
-const TT=[["mn","☰ Menu: opens the main menu. Your game saves automatically."],["kt","This is your current kingdom. Reach Level 12 to complete it and unlock the next one."],["en","⚡ Energy: every Spawn costs 1⚡. You get 1⚡ every 5 seconds, and the maximum grows as you reach higher levels."],["coins","💰 Coins: earned by merging and selling pets in THIS kingdom. Every kingdom has its own coins, so they can't be used in other kingdoms. Spend them on Nest upgrades."],["sc","🏆 Score: your points on the leaderboard."],["col","Collection: the pets you have discovered. Reach the last one to finish the kingdom."],["grid","The 5×6 board. Tap a pet, then tap the SAME pet to merge them into the next level. Tap an empty cell to move a pet."],["sp","Spawn: costs 1⚡ and places a random pet on the board, from level 1 up to your Nest level."],["ae","📺 +6⚡: optionally watch an ad to get 6 extra energy."],["nest","🪺 Nest: spend coins to raise your Nest level. At Nest level 4, Spawn gives a random pet from level 1 to 4."],["sell","💰 Sell: tap a pet, then press Sell to turn it into coins and free up space."]];
+const TT=[["mn","☰ Menu: opens the main menu. Your game saves automatically."],["kt","This is your current kingdom. Reach Level 12 to complete it and unlock the next one."],["en","⚡ Energy: every Spawn costs 1⚡. You get 1⚡ every 5 seconds, and the maximum grows as you reach higher levels. Each kingdom has its own energy."],["coins","💰 Coins: earned by merging and selling pets in THIS kingdom. Every kingdom has its own coins, so they can't be used in other kingdoms. Spend them on Nest upgrades."],["sc","🏆 Score: your points on the leaderboard."],["col","Collection: the pets you have discovered. Reach the last one to finish the kingdom."],["grid","The 5×6 board. Tap a pet, then tap the SAME pet to merge them into the next level. Tap an empty cell to move a pet."],["sp","Spawn: costs 1⚡ and places a random pet on the board, from level 1 up to your Nest level."],["ae","📺 +6⚡: optionally watch an ad to get 6 extra energy."],["nest","🪺 Nest: spend coins to raise your Nest level. At Nest level 4, Spawn gives a random pet from level 1 to 4."],["sell","💰 Sell: tap a pet, then press Sell to turn it into coins and free up space."]];
 function tour(i){document.querySelectorAll('.hl').forEach(e=>e.classList.remove('hl'));
  if(i>=TT.length){$('tb').style.display=$('tt').style.display='none';render();return}
  const e=$(TT[i][0]);e.classList.add('hl');$('tb').style.display='block';
@@ -246,7 +248,7 @@ $('b2').onclick=()=>show('kings');$('b3').onclick=()=>show('sett');$('b4').oncli
 document.querySelectorAll('.bk').forEach(b=>b.onclick=()=>show('menu'));
 function buildK(){$('kl').innerHTML='';K.forEach((k,i)=>{const d=document.createElement('div'),lk=i>=S.un;
  d.className='kc'+(i===S.k?' cur':'')+(lk?' lock':'');
- d.innerHTML='<div class="e">'+(lk?'🔒':k.i)+'</div><div><b>'+k.n+'</b><br>'+(lk?'Complete '+K[i-1].n+' first':S.b[i].done?'✅ Completed':'Best: Level '+S.b[i].mx+'/12')+(lk?'':'<br>💰 '+fmt(S.b[i].c||0)+' coins')+'</div>';
+ d.innerHTML='<div class="e">'+(lk?'🔒':k.i)+'</div><div><b>'+k.n+'</b><br>'+(lk?'Complete '+K[i-1].n+' first':S.b[i].done?'✅ Completed':'Best: Level '+S.b[i].mx+'/12')+(lk?'':'<br>💰 '+fmt(S.b[i].c||0)+' coins · ⚡ '+eNow(S.b[i])+'/'+(5+S.b[i].mx))+'</div>';
  d.onclick=()=>lk?toast('Complete '+K[i-1].n+' first'):goK(i);$('kl').appendChild(d)})}
 const RIV=[["Egg Rookie",0,40,2,0,1],["Tiny Tim",0,120,3,0,1],["Sir Flappington",0,500,6,0,1],["Pebble the Newt",1,1500,4,1,2],["Ribbit Royal",1,4000,8,1,2],["Captain Finley",2,9000,7,2,3],["Luna Wolfheart",3,18000,8,3,4],["Professor Bumble",5,35000,6,5,6],["Queen Mira",4,60000,9,4,5],["Grandmaster Oak",6,100000,5,6,7],["Phoenix Rider Kai",4,160000,12,5,6],["Dragon Lord Zephyr",6,250000,12,7,7],["Cyber Queen Ada",8,380000,9,8,9],["Cosmic Overlord Nova",9,520000,12,9,10]].map(a=>({name:a[0],k:a[1],sc:a[2],mx:a[3],done:a[4],un:a[5],f:1,seen:0}));
 const ago=t=>{const m=Math.max(1,Math.round((Date.now()-t)/60000));return m<60?m+' min ago':Math.round(m/60)+' h ago'};
