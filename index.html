@@ -69,7 +69,8 @@ h1{font-size:30px;text-align:center;margin:40px 0 4px}h2{margin:14px 0}
 <div id="toast"></div>
 <div id="tb"></div><div id="tt"><p id="tp"></p><div class="row"><button class="btn s" id="tk">Skip</button><button class="btn g" id="tn">Next →</button></div></div>
 <script>
-const $=id=>document.getElementById(id);const YT=window.ytgame;
+const $=id=>document.getElementById(id);// Only treat the SDK as active when really running inside YouTube Playables (on other sites it loads but is inactive)
+const YT=(window.ytgame&&window.ytgame.IN_PLAYABLES_ENV)?window.ytgame:null;
 const K=[
 {n:"Birds",i:"🐦",bg:"#1d5a8a,#0e2a47",t:[["Egg","🥚"],["Cracked Egg","🐣"],["Chick","🐥"],["Fledgling","🐤"],["Sparrow","🐦"],["Dove","🕊️"],["Duck","🦆"],["Swan","🦢"],["Parrot","🦜"],["Eagle","🦅"],["Peacock","🦚"],["Dragon","🐉"]]},
 {n:"Amphibians",i:"🐸",bg:"#1f7a4a,#0c3322",t:[["Spawn","🫧"],["Tadpole","🪱"],["Froglet","🐛"],["Pond Snail","🐌"],["Newt","🦎"],["Tree Frog","🐸"],["Terrapin","🐢"],["Marsh Viper","🐍"],["Gator","🐊"],["Longneck","🦕"],["Swamp Rex","🦖"],["Swamp Dragon","🐲"]]},
@@ -143,7 +144,7 @@ function sfx(type,L){if(!S.sf||!aud)return;const a=ctx();if(!a||a.state!=='runni
  else if(type==='err'){tone(170,t,.2,.3,'sawtooth',sG)}
  else if(type==='win'){[523.3,659.3,784,1046.5,1318.5].forEach((f,i)=>tone(f,t+i*.1,.4,.32,'triangle',sG))}}
 // unlock audio on the first touch/click, then start music
-document.addEventListener('pointerdown',()=>{ctx();music()});
+['pointerdown','touchend','click','keydown'].forEach(ev=>document.addEventListener(ev,()=>{ctx();music()},{passive:true}));  // mobile browsers only allow audio after touchend/click
 // tap sound for every button except board cells/spawn/sell (they play their own sounds)
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('button');
  if(b&&!b.classList.contains('c')&&b.id!=='sp'&&b.id!=='sell')sfx('tap')});
