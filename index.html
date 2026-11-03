@@ -168,7 +168,10 @@ async function load(){let d;try{if(YT&&YT.game)d=await YT.game.loadData()}catch(
  if(d)try{const o=JSON.parse(d);if(o.b&&o.b.length<=K.length&&o.b[0].g.length===N){while(o.b.length<K.length)o.b.push({g:Array(N).fill(0),mx:1,n:0,done:0,c:0});S=Object.assign(S,o)}}catch(e){}
  S.b.forEach(b=>{if(typeof b.c!=='number')b.c=0});
  if(!S.cm){S.b[S.k].c+=S.c||0;S.c=0;S.cm=1}
- if(S.tut===2)S.tut=3}
+ if(S.tut===2)S.tut=3;
+ if(S.e>cap())S.e=cap()}
+// add energy but never go above the Max energy limit (never lowers energy that is already above it)
+const addE=n=>{S.e=Math.max(S.e,Math.min(S.e+n,cap()))};
 function regen(){const now=Date.now(),c=cap();
  if(S.t>now)S.t=now;
  if(S.e<c){const k=Math.floor((now-S.t)/REG);if(k>0){S.e=Math.min(c,S.e+k);S.t=S.e>=c?now:S.t+k*REG}}else S.t=now}
@@ -198,7 +201,7 @@ function discover(L){sfx('win');const t=K[S.k].t[L-1],r=2**(L+2),bb=B();bb.c+=r;
 function goK(i){S.k=i;sel=-1;show('game');const g=$('grid');g.classList.remove('flip');void g.offsetWidth;g.classList.add('flip');save()}
 
 $('sp').onclick=()=>{regen();
- if(S.e<1)return modal('Out of energy ⚡','Watch a short ad for +6 energy, or wait: 1⚡ every 5 seconds.',[['📺 +6 ⚡',()=>withAd('energy-6',()=>S.e=Math.min(S.e+6,60)),'ad'],['Later']]);
+ if(S.e<1)return modal('Out of energy ⚡','Watch a short ad for +6 energy, or wait: 1⚡ every 5 seconds.',[['📺 +6 ⚡',()=>withAd('energy-6',()=>addE(6)),'ad'],['Later']]);
  const b=B(),f=[];b.g.forEach((v,i)=>{if(!v)f.push(i)});
  if(!f.length){sfx('err');return toast('Board full! Merge or sell a pet')}
  if(S.e>=cap())S.t=Date.now();S.e--;
@@ -206,7 +209,7 @@ $('sp').onclick=()=>{regen();
  b.g[f[Math.random()*f.length|0]]=L;if(L>b.mx)b.mx=L;sfx('spawn');
  if(S.tut===0&&b.g.filter(x=>x).length>=2)S.tut=1;
  render();save()};
-$('ae').onclick=()=>withAd('energy-6',()=>{S.e=Math.min(S.e+6,60);toast('+6 ⚡')});
+$('ae').onclick=()=>S.e>=cap()?toast('⚡ Energy is already full'):withAd('energy-6',()=>{addE(6);toast('+6 ⚡')});
 $('sell').onclick=()=>{const g=B().g;if(sel<0)return toast('Tap a pet first, then Sell');
  const v=Math.floor(2**g[sel]*.75);B().c+=v;g[sel]=0;sel=-1;toast('Sold for 💰'+fmt(v));sfx('sell');render();save()};
 $('nest').onclick=()=>{const b=B();if(b.n>=3)return;const c=NC[b.n];if(b.c<c){sfx('err');return toast('Need 💰'+fmt(c)+' '+K[S.k].n+' coins')}b.c-=c;b.n++;toast('Nest upgraded!');render();save()};
@@ -276,8 +279,8 @@ $('nb').onclick=()=>{const v=$('ni').value.trim();
 function daily(){const d=Math.floor(Date.now()/864e5);if(S.d===d)return;
  S.streak=S.d===d-1?S.streak%7+1:1;S.d=d;const m=S.streak===7?3:1,en=6*S.streak*m,co=100*S.streak*m;
  modal('Daily Gift 🎁 Day '+S.streak+'/7','Come back daily! Day 7 = triple gift.\nToday: ⚡'+en+' + 💰'+co+' ('+K[S.k].n+' coins)',
- [['Claim',()=>{S.e=Math.min(S.e+en,60);B().c+=co;render();save()},'g'],
-  ['📺 Claim 2x',async()=>{const k=(await ad('daily-2x'))?2:1;S.e=Math.min(S.e+en*k,60);B().c+=co*k;render();save()},'ad']])}
+ [['Claim',()=>{addE(en);B().c+=co;render();save()},'g'],
+  ['📺 Claim 2x',async()=>{const k=(await ad('daily-2x'))?2:1;addE(en*k);B().c+=co*k;render();save()},'ad']])}
 
 (async()=>{await load();show(S.nm?'menu':'nm');
  try{YT&&YT.game&&YT.game.firstFrameReady()}catch(e){}
