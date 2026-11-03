@@ -87,8 +87,10 @@ let S={nm:"",mu:1,sf:1,tut:0,k:0,un:1,wel:0,b:K.map(()=>({g:Array(N).fill(0),mx:
 const B=()=>S.b[S.k],cap=()=>5+B().mx;
 const fmt=n=>{if(n<1000)return Math.floor(n)+'';const u=['K','M','B'];let i=-1;while(n>=1000&&i<2){n/=1000;i++}return n.toFixed(1)+u[i]};
 function toast(t){const e=$('toast');e.textContent=t;e.style.display='block';setTimeout(()=>e.style.display='none',2000)}
-function modal(h,p,btns){$('mh').textContent=h;$('mp').textContent=p;const w=$('mbt');w.innerHTML='';
- btns.forEach(([l,f,c])=>{const b=document.createElement('button');b.className='btn '+(c||'');b.textContent=l;b.onclick=()=>{$('m').style.display='none';f&&f()};w.appendChild(b)});
+const mq=[];
+function modal(h,p,btns){if($('m').style.display==='flex'){mq.push([h,p,btns]);return}
+$('mh').textContent=h;$('mp').textContent=p;const w=$('mbt');w.innerHTML='';
+ btns.forEach(([l,f,c])=>{const b=document.createElement('button');b.className='btn '+(c||'');b.textContent=l;b.onclick=()=>{$('m').style.display='none';try{f&&f()}finally{if(mq.length&&$('m').style.display!=='flex')modal(...mq.shift())}};w.appendChild(b)});
  $('m').style.display='flex'}
 function show(id){document.querySelectorAll('.scr').forEach(s=>s.classList.toggle('on',s.id===id));
  if(id==='menu'){$('b1').textContent=S.tut<3&&!S.sc?'▶ Start':'▶ Continue';$('msub').textContent=K[S.k].i+' '+K[S.k].n+' Kingdom · '+S.nm}
@@ -165,7 +167,8 @@ async function load(){let d;try{if(YT&&YT.game)d=await YT.game.loadData()}catch(
  if(!d)try{d=localStorage.getItem('nest2')}catch(e){}
  if(d)try{const o=JSON.parse(d);if(o.b&&o.b.length<=K.length&&o.b[0].g.length===N){while(o.b.length<K.length)o.b.push({g:Array(N).fill(0),mx:1,n:0,done:0,c:0});S=Object.assign(S,o)}}catch(e){}
  S.b.forEach(b=>{if(typeof b.c!=='number')b.c=0});
- if(!S.cm){S.b[S.k].c+=S.c||0;S.c=0;S.cm=1}}
+ if(!S.cm){S.b[S.k].c+=S.c||0;S.c=0;S.cm=1}
+ if(S.tut===2)S.tut=3}
 function regen(){const now=Date.now(),c=cap();
  if(S.t>now)S.t=now;
  if(S.e<c){const k=Math.floor((now-S.t)/REG);if(k>0){S.e=Math.min(c,S.e+k);S.t=S.e>=c?now:S.t+k*REG}}else S.t=now}
@@ -182,7 +185,7 @@ function tap(i){const g=B().g;sfx('tap');
  render()}
 function merge(a,b){const g=B().g,L=++g[b];g[a]=0;B().c+=2**L;S.sc+=2**L;sfx('merge',L);
  cells[b].classList.remove('pop');void cells[b].offsetWidth;cells[b].classList.add('pop');
- if(S.tut===1){S.tut=2;modal('Great merge! 🎉','• ⚡ Energy refills every 5 seconds. More levels = bigger energy bar.\n• Tap a pet then 💰 Sell to free space.\n• Out of energy? Watch an ad for +6⚡.\n• Reach Level 12 to complete the kingdom and unlock the next one!',[["Got it!",()=>{S.tut=3;render();save()},'g']])}
+ if(S.tut===1){S.tut=3;modal('Great merge! 🎉','• ⚡ Energy refills every 5 seconds. More levels = bigger energy bar.\n• Tap a pet then 💰 Sell to free space.\n• Out of energy? Watch an ad for +6⚡.\n• Reach Level 12 to complete the kingdom and unlock the next one!',[["Got it!",()=>{render();save()},'g']])}
  if(L>B().mx){B().mx=L;discover(L)}
  save()}
 function discover(L){sfx('win');const t=K[S.k].t[L-1],r=2**(L+2),bb=B();bb.c+=r;const nk=S.k<K.length-1;
@@ -199,7 +202,7 @@ $('sp').onclick=()=>{regen();
  const b=B(),f=[];b.g.forEach((v,i)=>{if(!v)f.push(i)});
  if(!f.length){sfx('err');return toast('Board full! Merge or sell a pet')}
  if(S.e>=cap())S.t=Date.now();S.e--;
- const L=Math.min(1+b.n+(S.tut>=3&&Math.random()<.15?1:0),11);
+ const top=1+b.n,L=S.tut>=3?1+Math.floor(Math.random()*top):1; // random pet from level 1 up to the Nest level (tutorial: always level 1)
  b.g[f[Math.random()*f.length|0]]=L;if(L>b.mx)b.mx=L;sfx('spawn');
  if(S.tut===0&&b.g.filter(x=>x).length>=2)S.tut=1;
  render();save()};
@@ -218,12 +221,12 @@ function render(){regen();const k=K[S.k],b=B();
  $('hint').textContent=S.tut===0?'👇 Tap SPAWN to hatch your first pets':S.tut===1?'Tap a pet, then tap the SAME pet to merge!':'';
  b.g.forEach((v,i)=>{cells[i].textContent=v?k.t[v-1][1]:'';cells[i].classList.toggle('sel',i===sel)});
  strip.forEach((s,i)=>{s.textContent=k.t[i][1];s.classList.toggle('on',b.mx>i)});
- $('sp').textContent=k.t[0][1]+' Spawn (1⚡)';
- $('nest').textContent=b.n<3?'🪺 Nest Lv'+(b.n+2)+' · 💰'+fmt(NC[b.n]):'🪺 Nest MAX';$('nest').disabled=b.n>=3}
+ $('sp').textContent=k.t[0][1]+' Spawn 1⚡ (Lv1'+(b.n?'-'+(b.n+1):'')+')';
+ $('nest').textContent=b.n<3?'🪺 Nest '+(b.n+1)+'→'+(b.n+2)+' · 💰'+fmt(NC[b.n]):'🪺 Nest MAX (Lv4)';$('nest').disabled=b.n>=3}
 
 
 // Guided tour: highlights every button and explains it
-const TT=[["mn","☰ Menu: opens the main menu. Your game saves automatically."],["kt","This is your current kingdom. Reach Level 12 to complete it and unlock the next one."],["en","⚡ Energy: every Spawn costs 1⚡. You get 1⚡ every 5 seconds, and the maximum grows as you reach higher levels."],["coins","💰 Coins: earned by merging and selling pets in THIS kingdom. Every kingdom has its own coins, so they can't be used in other kingdoms. Spend them on Nest upgrades."],["sc","🏆 Score: your points on the leaderboard."],["col","Collection: the pets you have discovered. Reach the last one to finish the kingdom."],["grid","The 5×6 board. Tap a pet, then tap the SAME pet to merge them into the next level. Tap an empty cell to move a pet."],["sp","Spawn: costs 1⚡ and places a new pet on the board."],["ae","📺 +6⚡: optionally watch an ad to get 6 extra energy."],["nest","🪺 Nest: spend coins so Spawn creates higher-level pets."],["sell","💰 Sell: tap a pet, then press Sell to turn it into coins and free up space."]];
+const TT=[["mn","☰ Menu: opens the main menu. Your game saves automatically."],["kt","This is your current kingdom. Reach Level 12 to complete it and unlock the next one."],["en","⚡ Energy: every Spawn costs 1⚡. You get 1⚡ every 5 seconds, and the maximum grows as you reach higher levels."],["coins","💰 Coins: earned by merging and selling pets in THIS kingdom. Every kingdom has its own coins, so they can't be used in other kingdoms. Spend them on Nest upgrades."],["sc","🏆 Score: your points on the leaderboard."],["col","Collection: the pets you have discovered. Reach the last one to finish the kingdom."],["grid","The 5×6 board. Tap a pet, then tap the SAME pet to merge them into the next level. Tap an empty cell to move a pet."],["sp","Spawn: costs 1⚡ and places a random pet on the board, from level 1 up to your Nest level."],["ae","📺 +6⚡: optionally watch an ad to get 6 extra energy."],["nest","🪺 Nest: spend coins to raise your Nest level. At Nest level 4, Spawn gives a random pet from level 1 to 4."],["sell","💰 Sell: tap a pet, then press Sell to turn it into coins and free up space."]];
 function tour(i){document.querySelectorAll('.hl').forEach(e=>e.classList.remove('hl'));
  if(i>=TT.length){$('tb').style.display=$('tt').style.display='none';render();return}
  const e=$(TT[i][0]);e.classList.add('hl');$('tb').style.display='block';

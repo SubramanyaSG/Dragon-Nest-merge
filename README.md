@@ -26,7 +26,7 @@ A casual HTML5 merge-and-evolve game built for **YouTube Playables**. Merge matc
 1. Press **Spawn** (costs 1⚡) to place a new pet on the board.
 2. Tap a pet, then tap another pet of the **same level** to merge them.
 3. Tap an empty cell to move a selected pet. Use **Sell** to turn a selected pet into coins and free up space.
-4. Spend coins on **Nest** upgrades so spawns start at a higher level.
+4. Spend coins on **Nest** upgrades. At Nest level N, each Spawn gives a random pet from level 1 to N (max Nest level 4).
 5. Reach **Level 12** to complete the kingdom and unlock the next one.
 
 ## 💰 Ads
@@ -58,8 +58,8 @@ const TEST=false; // true ONLY to test fake ads in a normal browser. MUST be fal
 No installation needed.
 
 ```bash
-git clone https://github.com/SubramanyaSG/Dragon-Nest-merge.git
-cd /SubramanyaSG/Dragon-Nest-merge
+git clone https://github.com/<your-username>/<your-repo>.git
+cd <your-repo>
 # open index.html in your browser, or serve it:
 python3 -m http.server 8000
 # then visit http://localhost:8000
@@ -70,7 +70,7 @@ python3 -m http.server 8000
 1. Set `TEST=true` in a demo copy of `index.html` so reviewers can see the ad flow.
 2. Push the repo to GitHub.
 3. Go to **Settings → Pages**, choose your branch and the root folder, then save.
-4. Your game will be live at `https://subramanyasg.github.io/Dragon-Nest-merge/`.
+4. Your game will be live at `https://<your-username>.github.io/<your-repo>/`.
 
 ## 📦 Submit to YouTube Playables
 
@@ -120,4 +120,4 @@ Add your preferred license here (for example, MIT). Pet emojis are standard Unic
 
 ## 🙌 Credits
 
-Made by SubramanyaSG. Feedback and ideas are welcome. Open an issue or a pull request.
+Made by **<your name>**. Feedback and ideas are welcome. Open an issue or a pull request.
