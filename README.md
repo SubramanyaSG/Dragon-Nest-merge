@@ -12,7 +12,7 @@ A casual HTML5 merge-and-evolve game built for **YouTube Playables**. Merge matc
 - **5×6 merge board**: tap a pet, then tap an identical pet to merge them into the next level
 - **Kingdom progression**: reach Level 12 to complete a kingdom and unlock the next one, with animated transitions
 - **Energy system**: every spawn costs 1⚡. Energy recharges 1⚡ every 5 seconds, and the maximum grows by 1 for each level you reach in the current kingdom
-- **Economy**: earn coins by merging and selling pets, and spend them on Nest upgrades that spawn higher-level pets
+- **Economy**: earn coins by merging and selling pets, and spend them on Nest upgrades that spawn higher-level pets. **Every kingdom has its own coins**: each starts at 0 and can't be spent in other kingdoms
 - **Daily rewards**: 7-day streak with a triple reward on day 7
 - **Guided tutorial**: highlights and explains every button for first-time players (replay it from Settings → How to play)
 - **Player profile**: first launch asks for a player name, and the game adds a random tag to keep it unique
